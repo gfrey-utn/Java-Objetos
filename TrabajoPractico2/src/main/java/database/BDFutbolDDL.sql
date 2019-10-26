@@ -27,13 +27,11 @@ create table jugadores(
     numero int not null,
     fechanacimiento datetime not null,
     pais_id int not null,
-    equipo_id int not null,
-    stats_id int not null
+    equipo_id int not null
 );
 
 create table stats(
-    id int auto_increment primary key,
-    jugador_id int not null,
+    jugador_id int primary key,
     posicion enum ('Arquero', 'Defensor', 'Volante', 'Delantero'),
     pie enum ('Zurdo', 'Diestro'),
     altura int not null,
@@ -69,11 +67,6 @@ alter table jugadores
     foreign key(equipo_id)
     references equipos(id);
     
-alter table jugadores
-    add constraint fk_jugadores_stats_idStats
-    foreign key(stats_id)
-    references stats(id);
-
 alter table stats
     add constraint fk_stats_jugadores_idJugador
     foreign key(jugador_id)
@@ -81,5 +74,3 @@ alter table stats
 
 -- DML: Inserción de registros de prueba
 -- insert into paises (nombre) values ("Argentina");
-
-
