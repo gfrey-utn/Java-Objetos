@@ -71,6 +71,3 @@ alter table stats
     add constraint fk_stats_jugadores_idJugador
     foreign key(jugador_id)
     references jugadores(id);
-
--- DML: Inserción de registros de prueba
--- insert into paises (nombre) values ("Argentina");
