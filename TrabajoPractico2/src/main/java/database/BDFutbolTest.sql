@@ -33,7 +33,7 @@ select l.nombre, l.division, count(*) nro_equipos, p.nombre pais
 from ligas l
 join paises p on p.id = l.pais_id
 join equipos e on l.id = e.liga_id
-group by l.nombre
+group by l.nombre, l.division, p.nombre
 having nro_equipos = (
 	select count(*) nro_equipos
     from ligas l
@@ -58,9 +58,12 @@ select j.nombre, j.apellido, p.nombre "nacionalidad", s.valoracion, s.potencial
 from jugadores j
 join stats s on j.id = s.jugador_id
 join paises p on p.id = j.pais_id
-group by p.nombre
-having s.valoracion = max(s.valoracion)
-order by p.nombre;
+where s.valoracion = (
+	select max(valoracion)
+    from jugadores js
+    join stats ss on js.id = ss.jugador_id
+    where js.pais_id = p.id
+);
 
 -- 8. ¿Cuáles son los jugadores que, o bien son argentinos, o juegan en una liga argentina?
 select j.nombre, j.apellido, p.nombre "nacionalidad" , l.nombre "liga", s.valoracion, s.potencial
