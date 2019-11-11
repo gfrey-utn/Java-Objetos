@@ -1,4 +1,5 @@
 -- Test: 10 consultas de prueba
+use futbol;
 
 -- 1. ¿Quiénes son los 3 mejores jugadores?
 select j.nombre, j.apellido, s.valoracion, s.potencial
