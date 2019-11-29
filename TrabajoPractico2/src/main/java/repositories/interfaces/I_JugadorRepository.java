@@ -2,6 +2,7 @@ package repositories.interfaces;
 import entities.Equipo;
 import entities.Jugador;
 import entities.Pais;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,13 @@ public interface I_JugadorRepository {
         return getAll()
                 .stream()
                 .filter(j->j.getNumero() == numero)
+                .collect(Collectors.toList());
+    }
+    
+    default List<Jugador> getByFechanacimiento(Date fecha){
+        return getAll()
+                .stream()
+                .filter(f->f.getFechanacimiento() == fecha)
                 .collect(Collectors.toList());
     }
     

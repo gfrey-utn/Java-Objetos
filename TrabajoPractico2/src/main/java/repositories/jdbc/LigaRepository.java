@@ -38,11 +38,12 @@ public class LigaRepository implements I_LigaRepository {
     @Override public void update(Liga liga) {
         if (liga == null) return;
         try (PreparedStatement ps = conn.prepareStatement(
-                "update set ligas pais_id=?, nombre=?, division=? where id=?"
+                "update ligas set pais_id=?, nombre=?, division=? where id=?"
             )) {
                 ps.setInt(1, liga.getPais_id());
                 ps.setString(2, liga.getNombre());
                 ps.setInt(3, liga.getDivision());
+                ps.setInt(4, liga.getId());
                 ps.execute();
         } catch (Exception e) { e.printStackTrace(); }
     }
