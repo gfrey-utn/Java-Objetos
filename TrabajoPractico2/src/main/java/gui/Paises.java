@@ -1,7 +1,33 @@
 package gui;
+
+import connectors.Connector;
+import entities.Pais;
+import javax.swing.JOptionPane;
+import repositories.interfaces.I_JugadorRepository;
+import repositories.interfaces.I_LigaRepository;
+import repositories.interfaces.I_PaisRepository;
+import repositories.jdbc.JugadorRepository;
+import repositories.jdbc.LigaRepository;
+import repositories.jdbc.PaisRepository;
+import utils.swing.Table;
+import utils.swing.Validator;
+
 public class Paises extends javax.swing.JInternalFrame {
+    private I_PaisRepository pr;
+    private I_LigaRepository lr;
+    private I_JugadorRepository jr;
     public Paises() {
+        super(
+                "Formulario de Países",    // titulo 
+                true,                       // resizable
+                true,                       // closable
+                true,                       // maximizable
+                true);                      // iconable
         initComponents();
+        pr = new PaisRepository(Connector.getConnection());
+        lr = new LigaRepository(Connector.getConnection());
+        jr = new JugadorRepository(Connector.getConnection());
+        cargar();
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -20,10 +46,26 @@ public class Paises extends javax.swing.JInternalFrame {
         jLabel1.setText("Nombre");
 
         btnAlta.setText("Dar de Alta");
+        btnAlta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAltaActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Buscar País:");
 
+        txtBuscarPais.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscarPaisKeyReleased(evt);
+            }
+        });
+
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         tblPaises.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -88,7 +130,49 @@ public class Paises extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAltaActionPerformed
+        if (!validar()) return;
+        Pais pais = new Pais(txtNombre.getText());
+        pr.save(pais);
+        JOptionPane.showMessageDialog(this,
+                "Se dio de alta un País id: " + pais.getId());
+        limpiar();
+        cargar();
+    }//GEN-LAST:event_btnAltaActionPerformed
 
+    private void txtBuscarPaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarPaisKeyReleased
+        String buscarPais = txtBuscarPais.getText();
+        if (buscarPais == null) buscarPais = "";
+        new Table<Pais>().cargar(tblPaises, pr.getLikeNombre(buscarPais));
+    }//GEN-LAST:event_txtBuscarPaisKeyReleased
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        int index = tblPaises.getSelectedRow();
+        if (index == -1) return;
+        Pais pais = pr.getById(Integer.parseInt(tblPaises.getValueAt(index, 0) + ""));
+        if (!jr.getByPais(pais).isEmpty() || !lr.getByPais(pais).isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No se puede borrar el país porque tiene jugadores y/o ligas.");
+            return;
+        }
+        if (JOptionPane.showConfirmDialog(this,
+                "¿Desea borrar el país " + pais.getNombre() + "?") != 0) return;
+        pr.remove(pais);
+        cargar();
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    public void cargar(){
+        new Table<Pais>().cargar(tblPaises, pr.getAll());
+    }
+
+    private void limpiar(){
+        txtNombre.setText("");
+    }
+    
+    private boolean validar(){
+        if (!new Validator(txtNombre).length(3, 25)) return false;
+        return true;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlta;
     private javax.swing.JButton btnEliminar;

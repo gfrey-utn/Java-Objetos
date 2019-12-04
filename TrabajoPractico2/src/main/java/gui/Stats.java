@@ -1,7 +1,33 @@
 package gui;
+
+import connectors.Connector;
+import entities.Stat;
+import enums.Pie;
+import enums.Posicion;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import repositories.interfaces.I_JugadorRepository;
+import repositories.interfaces.I_StatRepository;
+import repositories.jdbc.JugadorRepository;
+import repositories.jdbc.StatRepository;
+import utils.swing.Table;
+import utils.swing.Validator;
+
 public class Stats extends javax.swing.JInternalFrame {
+    private I_StatRepository sr;
+    private I_JugadorRepository jr;
     public Stats() {
+        super(
+                "Formulario de Stats",    // titulo 
+                true,                       // resizable
+                true,                       // closable
+                true,                       // maximizable
+                true);
+        sr = new StatRepository(Connector.getConnection());
+        jr = new JugadorRepository(Connector.getConnection());
         initComponents();
+        cargar();
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -57,10 +83,6 @@ public class Stats extends javax.swing.JInternalFrame {
             }
         });
 
-        cmbPosicion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        cmbPie.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         jLabel7.setText("Ataque");
 
         jLabel8.setText("Defensa");
@@ -74,10 +96,26 @@ public class Stats extends javax.swing.JInternalFrame {
         jLabel12.setText("Potencial");
 
         btnAlta.setText("Dar de Alta");
+        btnAlta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAltaActionPerformed(evt);
+            }
+        });
 
         jLabel13.setText("Buscar Stat (según ID del Jugador):");
 
+        txtBuscarStat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscarStatKeyReleased(evt);
+            }
+        });
+
         btnEliminar.setText("Eliminar Stat");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         tblStats.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -98,47 +136,29 @@ public class Stats extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1)
             .addGroup(layout.createSequentialGroup()
+                .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addComponent(jLabel13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtBuscarStat, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
                         .addGap(18, 18, 18)
-                        .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 93, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbPosicion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtIDJugador, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cmbPosicion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtIDJugador, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel6))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cmbPie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtValoracion, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(txtPeso, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtAltura, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(102, 102, 102))
-                    .addComponent(btnAlta, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbPie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtValoracion, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(txtPeso, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtAltura, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel11)
@@ -158,7 +178,24 @@ public class Stats extends javax.swing.JInternalFrame {
                     .addComponent(txtPases)
                     .addComponent(txtVelocidad)
                     .addComponent(txtTiro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(93, 93, 93))
+                .addGap(77, 77, 77))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(165, 165, 165)
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtBuscarStat, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(289, 289, 289)
+                        .addComponent(btnAlta, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(178, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,8 +246,8 @@ public class Stats extends javax.swing.JInternalFrame {
                     .addComponent(txtBuscarStat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEliminar))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -220,12 +257,103 @@ public class Stats extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIDJugadorActionPerformed
 
+    private void txtBuscarStatKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarStatKeyReleased
+        List<Stat> lista = new ArrayList();
+        lista.add(sr.getByJugador_id(Integer.parseInt(txtBuscarStat.getText())));
+        new Table<Stat>().cargar(tblStats, lista);
+    }//GEN-LAST:event_txtBuscarStatKeyReleased
 
+    private void btnAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAltaActionPerformed
+        if (!validar()) return;
+        if (jr.getById(Integer.parseInt(txtIDJugador.getText())) == null) {
+            JOptionPane.showMessageDialog(this, "No existe el jugador de ID: " + txtIDJugador.getText());
+            txtIDJugador.requestFocus();
+            return;
+        }
+        if (sr.getByJugador_id(Integer.parseInt(txtIDJugador.getText())) != null) {
+            JOptionPane.showMessageDialog(this, "Ya existen los stats del jugador con ese ID.");
+            txtIDJugador.requestFocus();
+            return;
+        }
+        Stat stat = new Stat(
+                Integer.parseInt(txtIDJugador.getText()),
+                cmbPosicion.getItemAt(cmbPosicion.getSelectedIndex()),
+                cmbPie.getItemAt(cmbPie.getSelectedIndex()),
+                Integer.parseInt(txtAltura.getText()),
+                Integer.parseInt(txtPeso.getText()),
+                Integer.parseInt(txtAtaque.getText()),
+                Integer.parseInt(txtDefensa.getText()),
+                Integer.parseInt(txtPases.getText()),
+                Integer.parseInt(txtVelocidad.getText()),
+                Integer.parseInt(txtTiro.getText()),
+                Integer.parseInt(txtValoracion.getText()),
+                Integer.parseInt(txtPotencial.getText())
+        );
+        sr.save(stat);
+        JOptionPane.showMessageDialog(this, "Se dieron de alta los stats para el Jugador "
+            + jr.getById(stat.getJugador_id()).getNombre()
+            + " " + jr.getById(stat.getJugador_id()).getApellido()
+            + ", de ID: " + stat.getJugador_id());
+        limpiar();
+        cargar();
+    }//GEN-LAST:event_btnAltaActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        int index = tblStats.getSelectedRow();
+        if (index == -1) return;
+        Stat stat = sr.getByJugador_id(Integer.parseInt(tblStats.getValueAt(index, 0) + ""));
+        if (JOptionPane.showConfirmDialog(this,
+                "¿Desea borrar los stats del Jugador "
+                + jr.getById(stat.getJugador_id()).getNombre()
+                + " " + jr.getById(stat.getJugador_id()).getApellido()
+                + ", de ID: " + stat.getJugador_id()) != 0) return;
+        sr.remove(stat);
+        cargar();
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    public void cargar(){
+        cmbPosicion.removeAllItems();
+        for (Posicion pos:Posicion.values()) cmbPosicion.addItem(pos);
+        cmbPie.removeAllItems();
+        for (Pie pie:Pie.values()) cmbPie.addItem(pie);
+        new Table<Stat>().cargar(tblStats, sr.getAll());
+    }
+    
+    private void limpiar(){
+        txtIDJugador.setText("");
+        cmbPosicion.setSelectedIndex(0);
+        cmbPie.setSelectedIndex(0);
+        txtAltura.setText("");
+        txtPeso.setText("");
+        txtAtaque.setText("");
+        txtDefensa.setText("");
+        txtPases.setText("");
+        txtVelocidad.setText("");
+        txtTiro.setText("");
+        txtValoracion.setText("");
+        txtPotencial.setText("");
+        txtIDJugador.requestFocus();
+    }
+
+    private boolean validar(){
+        if (!new Validator(txtIDJugador).isInteger()) return false;
+        if (!new Validator(txtAltura).isInteger(100, 220)) return false;
+        if (!new Validator(txtPeso).isInteger(40, 130)) return false;
+        if (!new Validator(txtAtaque).isInteger(1, 99)) return false;
+        if (!new Validator(txtDefensa).isInteger(1, 99)) return false;
+        if (!new Validator(txtPases).isInteger(1, 99)) return false;
+        if (!new Validator(txtVelocidad).isInteger(1, 99)) return false;
+        if (!new Validator(txtTiro).isInteger(1, 99)) return false;
+        if (!new Validator(txtValoracion).isInteger(1, 99)) return false;
+        if (!new Validator(txtPotencial).isInteger(1, 99)) return false;
+        return true;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlta;
     private javax.swing.JButton btnEliminar;
-    private javax.swing.JComboBox<String> cmbPie;
-    private javax.swing.JComboBox<String> cmbPosicion;
+    private javax.swing.JComboBox<Pie> cmbPie;
+    private javax.swing.JComboBox<Posicion> cmbPosicion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

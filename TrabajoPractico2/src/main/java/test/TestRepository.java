@@ -140,9 +140,9 @@ public class TestRepository {
             System.out.println("----- TEST REPOSITORIO JUGADORES -----");
             System.out.println("*** Agregado de Jugadores ***");
             
-            Jugador tevez = new Jugador("Carlos", "Tévez", 10, new Date(1984, 5, 2), 2, 31);
-            Jugador deJong = new Jugador("Frenkie", "De Jong", 21, new Date(1997, 5, 12), 13, 9);
-            Jugador fati = new Jugador("Anssumane", "Fati", 31, new Date(2002, 10, 31), 11, 9);
+            Jugador tevez = new Jugador("Carlos", "Tévez", 10, java.sql.Date.valueOf("1984-05-02"), 2, 31);
+            Jugador deJong = new Jugador("Frenkie", "De Jong", 21, java.sql.Date.valueOf("1997-05-12"), 13, 9);
+            Jugador fati = new Jugador("Anssumane", "Fati", 31, java.sql.Date.valueOf("2002-10-31"), 11, 9);
             
             jr.save(tevez);
             jr.save(deJong);
@@ -161,7 +161,7 @@ public class TestRepository {
             jugador.setNombre("Mason");
             jugador.setApellido("Greenwood");
             jugador.setNumero(26);
-            jugador.setFechanacimiento(new Date(2001, 10, 1));
+            jugador.setFechanacimiento(java.sql.Date.valueOf("2001-10-01"));
             jugador.setPais_id(15);
             jugador.setEquipo_id(5);
             jr.update(jugador);
@@ -177,9 +177,8 @@ public class TestRepository {
             System.out.println("\n*** Se buscan los jugadores que lleven la camiseta número 10 ***");
             jr.getByNumero(10).forEach(System.out::println);
             
-            System.out.println("\n*** Se buscan los jugadores nacidos el 5/2/1992 ***");
-            jr.getByFechanacimiento(new Date(1992, 2, 5)).forEach(System.out::println);
-            // TO BE DONE
+            //System.out.println("\n*** Se buscan los jugadores nacidos el 4/2/1992 ***");
+            //jr.getByFechanacimiento(java.sql.Date.valueOf("1992-02-04")).forEach(System.out::println);
             
             System.out.println("\n*** Se buscan los jugadores argentinos ***");
             jr.getByPais(pr.getById(2)).forEach(System.out::println);
@@ -197,7 +196,11 @@ public class TestRepository {
             Stat sDeJong = new Stat(79, Posicion.Volante, Pie.Diestro, 180, 74, 76, 69, 80, 84, 66, 86, 92);
             Stat sFati = new Stat(80, Posicion.Delantero, Pie.Diestro, 178, 65, 73, 47, 71, 87, 72, 71, 90);
 
-            sr.save(sTevez);
+            sr.remove(sr.getByJugador_id(78));
+            sr.remove(sr.getByJugador_id(79));
+            sr.remove(sr.getByJugador_id(80));
+            
+            //sr.save(sTevez);
             sr.save(sDeJong);
             sr.save(sFati);
             
@@ -265,8 +268,6 @@ public class TestRepository {
 
             System.out.println("\n*** Se buscan todos los jugadores con 93 de Potencial ***");
             sr.getByPotencial(93).forEach(System.out::println);
-                        
-            jr.getAll().forEach(j->System.out.println(j.getFechanacimiento()));
             
         } catch (Exception e) { e.printStackTrace(); }
     }
